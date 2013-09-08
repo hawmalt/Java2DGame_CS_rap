@@ -15,9 +15,9 @@ public class SpriteSheet {
 	 * That array of pixels is what is used to draw to the screen
 	 */
 	
-	public String path; //path to the image
-	public int width, height;
-	public BufferedImage image = null; //The spritesheet image
+	private String path; //path to the image
+	private int width, height;
+	private BufferedImage image = null; //The spritesheet image
 	
 	public SpriteSheet(String path)
 	{		
@@ -39,13 +39,29 @@ public class SpriteSheet {
 		
 		//set up variables
 		this.path = path;
-		this.width = image.getWidth();
-		this.height = image.getHeight();
+		this.setWidth(image.getWidth());
+		this.setHeight(image.getHeight());
 	}
 	
 	public void render(Graphics g, Rectangle dest, Rectangle source)
 	{
 		g.drawImage(image, dest.x, dest.y, dest.x + dest.width, dest.y + dest.height, 
 				source.x, source.y, source.x + source.width, source.y + source.height, null);
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
 	}
 }

@@ -19,8 +19,8 @@ public class Level
 {
 	private int[] tiles; //array of ids for what tile is in that coordinate
 	
-	public int width; //width in tiles
-	public int height; //height in tiles
+	private int width; //width in tiles
+	private int height; //height in tiles
 	
 	private List<Entity> entities = new ArrayList<Entity>(); //the objects in the level
 	
@@ -169,7 +169,7 @@ public class Level
 				//get destination rectangle
 				Rectangle destRect = new Rectangle(x*Tile.width, y*Tile.height , Tile.width, Tile.height);
 				//get source rectangle
-				Rectangle sourceRect = new Rectangle((id*Tile.width)%sheet.width, (id/sheet.width)*Tile.height, Tile.width, Tile.height);
+				Rectangle sourceRect = new Rectangle((id*Tile.width)%sheet.getWidth(), (id/sheet.getWidth())*Tile.height, Tile.width, Tile.height);
 				
 				//draw the tile to screen
 				sheet.render(g, destRect, sourceRect);

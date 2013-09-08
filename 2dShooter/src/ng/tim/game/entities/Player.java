@@ -5,9 +5,9 @@ import java.awt.Rectangle;
 
 import ng.tim.game.Game;
 import ng.tim.game.InputHandler;
+import ng.tim.game.gfx.Animation;
 import ng.tim.game.gfx.Font;
 import ng.tim.game.level.Level;
-import ng.tim.game.level.tiles.Tile;
 import ng.tim.game.net.packets.Packet02Move;
 
 public class Player extends Mob
@@ -19,6 +19,7 @@ public class Player extends Mob
 	private Rectangle sourceRec;
 	public static final int playerWidth = 16;
 	public static final int playerHeight = 16;
+	private Animation anim1 = new Animation(Game.mainSpriteSheet, 2, 0, "walking up", true, new Rectangle(0, 28*8, playerWidth, playerHeight), 20);
 	
 	public Player(Level level, int x, int y, InputHandler input, String username)
 	{
@@ -37,6 +38,7 @@ public class Player extends Mob
 			if(input.up.isPressed())
 			{
 				ya--;
+				anim1.updateAnimation();
 			}
 			if(input.down.isPressed())
 			{
@@ -71,14 +73,7 @@ public class Player extends Mob
 	}
 
 	public void render(Graphics g)
-	{
-		int xTile = (movingDir * 4);
-		int yTile = 28;
-		int walkingSpeed = 4;
-		int flipTop = (numSteps >> walkingSpeed) & 1;
-		int flipBottom = (numSteps >> walkingSpeed) & 1;
-		
-		
+	{	
 		int modifier = 8 * scale; // size of the player
 		int xOffset = x - modifier/2;
 		int yOffset = y - modifier/2 - 4;
@@ -88,7 +83,7 @@ public class Player extends Mob
 		//get destination rectangle
 		Rectangle destRect = new Rectangle(x, y, playerWidth, playerHeight);
 		//get source rectangle
-		Rectangle sourceRect = new Rectangle(0, 28*8, playerWidth, playerHeight);
+		Rectangle sourceRect = anim1.getFrame();
 		
 		
 		//render the player

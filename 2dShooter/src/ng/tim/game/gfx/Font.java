@@ -27,7 +27,7 @@ public class Font
 				//get destination rectangle
 				Rectangle destRect = new Rectangle(x + (i*8), y, 8, 8);
 				//get source rectangle
-				Rectangle sourceRect = new Rectangle((charIndex*8) % Game.mainSpriteSheet.width, (23*8) + (charIndex/(Game.mainSpriteSheet.width>>3))*8, 8, 8);
+				Rectangle sourceRect = new Rectangle((charIndex*8) % Game.mainSpriteSheet.getWidth(), (23*8) + (charIndex/(Game.mainSpriteSheet.getWidth()>>3))*8, 8, 8);
 				
 				Game.mainSpriteSheet.render(g, destRect, sourceRect);
 			}
