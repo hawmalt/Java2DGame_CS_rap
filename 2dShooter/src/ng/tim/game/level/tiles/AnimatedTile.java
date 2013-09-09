@@ -8,9 +8,9 @@ public class AnimatedTile extends BasicTile
 	private long lastIterationTime; //milliseceonds since last update
 	private int animationSwitchDelay;
 
-	public AnimatedTile(int id, int[][] animationCoords, int animationSwitchDelay)
+	public AnimatedTile(int id, int[][] animationCoords, int animationSwitchDelay, int levelColor)
 	{
-		super(id, animationCoords[0][0], animationCoords[0][1]);
+		super(id, animationCoords[0][0], animationCoords[0][1], levelColor);
 		this.animationTileCoords = animationCoords;
 		this.currentAnimationIndex = 0;
 		this.lastIterationTime = System.currentTimeMillis();

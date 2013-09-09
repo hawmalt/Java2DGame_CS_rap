@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import ng.tim.game.entities.Player;
 import ng.tim.game.entities.PlayerMP;
+import ng.tim.game.gfx.Camera;
 import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.Level;
 import ng.tim.game.net.GameClient;
@@ -42,6 +43,7 @@ public class Game extends Canvas implements Runnable
 	
 	//For rendering
 	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_ARGB);	
+	private Camera cam = new Camera();
 	
 	public InputHandler input; //This handles all the key presses
 	public Level level;
@@ -64,7 +66,7 @@ public class Game extends Canvas implements Runnable
 		
 		input = new InputHandler(this);
 		
-		level = new Level(null,null);
+		level = new Level(null,"/Levels/water_test_level.png");
 		player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
 		level.addEntity(player);
 		
@@ -211,6 +213,8 @@ public class Game extends Canvas implements Runnable
 		g.fillRect(0,0,WIDTH,HEIGHT);
 		
 		g.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
+		
+		g.transform(cam.getTransformation());
 		
 		level.renderTiles(g); //render the tiles
 		level.renderEntities(g);//render the entities on top of tiles

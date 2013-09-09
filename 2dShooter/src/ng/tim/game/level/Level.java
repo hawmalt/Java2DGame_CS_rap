@@ -80,7 +80,7 @@ public class Level
 			{
 				tileCheck: for(Tile t : Tile.tiles)
 				{
-					if(t != null)
+					if(t != null && t.getLevelColor() == tileColors[x + y * width])
 					{
 						this.tiles[x + y * width] = t.getId();
 						break tileCheck;
