@@ -35,7 +35,7 @@ public class Camera
 		rotateTrans.rotate(rotation);
 		
 		AffineTransform translate = new AffineTransform();
-		translate.setToTranslation(x, y);
+		translate.setToTranslation(-x, -y);
 		
 		transformation.concatenate(scale);
 		transformation.concatenate(rotateTrans);

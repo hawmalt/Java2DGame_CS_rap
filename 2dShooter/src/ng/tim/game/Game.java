@@ -27,8 +27,8 @@ public class Game extends Canvas implements Runnable
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public static final int WIDTH = 500; //Width of the window resolution
-	public static final int HEIGHT = 500; //Height of the window resolution
+	public static final int WIDTH = 500; //Width of the window
+	public static final int HEIGHT = 500; //Height of the window
 	public static final String NAME = "Game"; //The games name
 	public static Game game;
 	public static final Dimension DIMENSIONS = new Dimension(WIDTH,HEIGHT);
@@ -66,7 +66,7 @@ public class Game extends Canvas implements Runnable
 		
 		input = new InputHandler(this);
 		
-		level = new Level(null,"/Levels/water_test_level.png");
+		level = new Level(null,"/Levels/big_water_performace_test_level.png");
 		player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
 		level.addEntity(player);
 		
@@ -160,7 +160,7 @@ public class Game extends Canvas implements Runnable
 			if(System.currentTimeMillis() - lastTimer >= 1000)
 			{
 				lastTimer += 1000;
-				debug(DebugLevel.INFO, frames + " frames, " + ticks + " ticks");
+				debug(DebugLevel.WARNING, frames + " frames, " + ticks + " ticks");
 				frames = 0;
 				ticks = 0;
 			}
@@ -173,22 +173,6 @@ public class Game extends Canvas implements Runnable
 	public void tick()
 	{
 		tickCount++;
-		if(input.up.isPressed())
-		{
-			y--;
-		}
-		if(input.down.isPressed())
-		{
-			y++;
-		}
-		if(input.left.isPressed())
-		{
-			x--;
-		}
-		if(input.right.isPressed())
-		{
-			x++;
-		}
 		
 		level.tick();
 	}
@@ -203,9 +187,6 @@ public class Game extends Canvas implements Runnable
 			return;
 		}
 		
-		int xOffset = player.x - (WIDTH / 2);
-		int yOffset = player.y - (HEIGHT / 2);
-		
 		Graphics2D g = (Graphics2D)bs.getDrawGraphics();
 		
 		//Blank out the screen
@@ -213,10 +194,12 @@ public class Game extends Canvas implements Runnable
 		g.fillRect(0,0,WIDTH,HEIGHT);
 		
 		g.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
+		cam.setX(cam.getX() + 1);
+
 		
 		g.transform(cam.getTransformation());
 		
-		level.renderTiles(g); //render the tiles
+		level.renderTiles(g, cam); //render the tiles
 		level.renderEntities(g);//render the entities on top of tiles
 		
 		g.dispose(); //frees up space since not using g anymore

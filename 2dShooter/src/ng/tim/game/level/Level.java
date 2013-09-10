@@ -10,8 +10,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import ng.tim.game.Game;
 import ng.tim.game.entities.Entity;
 import ng.tim.game.entities.PlayerMP;
+import ng.tim.game.gfx.Camera;
 import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.tiles.Tile;
 
@@ -154,14 +156,13 @@ public class Level
 	}
 	
 	//renders the tiles
-	public void renderTiles(Graphics g)
+	public void renderTiles(Graphics g, Camera cam)
 	{
 		
-		
-		//go through the tiles array
-		for(int y = 0; y < height; y++)
+		//go through the tiles array that are in the camera
+		for(int y = ((int)cam.getY())/Tile.height; y < (Game.HEIGHT + Tile.height*2 + cam.getY()) / Tile.height; y++)
 		{
-			for(int x = 0; x < width; x++)
+			for(int x = ((int)cam.getX())/Tile.width; x < (Game.WIDTH + Tile.width*2 + cam.getX()) / Tile.width; x++)
 			{
 				//get what type of tile it is
 				int id = tiles[x + y * width];
