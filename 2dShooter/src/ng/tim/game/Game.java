@@ -18,6 +18,7 @@ import ng.tim.game.level.Level;
 import ng.tim.game.net.GameClient;
 import ng.tim.game.net.GameServer;
 import ng.tim.game.net.packets.Packet00Login;
+import ng.tim.game.sound.Sound;
 
 public class Game extends Canvas implements Runnable
 {
@@ -57,6 +58,9 @@ public class Game extends Canvas implements Runnable
 	public boolean debug = true; //make this false only when we are about to release the game
 	public boolean isApplet = false;
 	
+	//SoundTest
+	public Sound sound = new Sound("/Sound/Randomize.wav");
+	
 	//initializing function
 	public void init()
 	{
@@ -69,6 +73,8 @@ public class Game extends Canvas implements Runnable
 		level = new Level(null,"/Levels/big_water_performace_test_level.png");
 		player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
 		level.addEntity(player);
+		
+		sound.play();
 		
 		if(!isApplet)
 		{
