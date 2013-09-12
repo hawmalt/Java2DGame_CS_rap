@@ -18,7 +18,7 @@ import ng.tim.game.net.packets.Packet02Move;
 public class GameClient extends Thread
 {
 	private InetAddress ipAddress;//ip address of the server we are connecting to
-	private DatagramSocket socket;
+	private DatagramSocket socket;//the socket
 	private Game game;
 	
 	public GameClient(Game game, String ipAddress)

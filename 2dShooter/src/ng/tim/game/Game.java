@@ -43,7 +43,7 @@ public class Game extends Canvas implements Runnable
 	public int tickCount = 0;
 	
 	//For rendering
-	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_ARGB);	
+	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);	
 	private Camera cam = new Camera();
 	
 	public InputHandler input; //This handles all the key presses
