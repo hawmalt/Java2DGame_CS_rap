@@ -1,7 +1,6 @@
 package ng.tim.game.level;
 
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import ng.tim.game.gfx.Camera;
 import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.tiles.GrassTile;
 import ng.tim.game.level.tiles.Tile;
+import ng.tim.game.level.tiles.VoidTile;
 
 public class Level
 {
@@ -93,7 +93,7 @@ public class Level
 				}
 				else
 				{
-					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);
+					tiles[x + y * width] = new VoidTile(0, 0, 0, 0xff000000, x * Tile.width, y * Tile.height);
 				}
 				
 			}
