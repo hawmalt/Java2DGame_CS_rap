@@ -34,48 +34,6 @@ public abstract class Mob extends Entity
 		}
 		
 		numSteps++;
-		if(!hasCollided(xa,ya))
-		{
-			if(ya < 0)
-			{
-				movingDir = 0; //it is moving up
-			}
-			if(ya > 0)
-			{
-				movingDir = 1; //it is moving up
-			}
-			if(xa < 0)
-			{
-				movingDir = 2; //it is moving up
-			}
-			if(xa > 0)
-			{
-				movingDir = 3; //it is moving up
-			}
-			
-			x += xa * speed;
-			y += ya * speed;
-		}
-	}
-	
-	public abstract boolean hasCollided(int xa, int ya);
-	
-	public boolean isSolidTile(int xa, int ya, int x, int y)
-	{
-		if(level == null)
-		{
-			return false;
-		}
-		
-		Tile lastTile = level.getTile((this.x + x) >> 3, (this.y + y) >> 3);
-		Tile newTile = level.getTile((this.x + x + xa) >> 3, (this.y + y + xa) >> 3);
-		
-		if(!lastTile.equals(newTile) && newTile.isSolid())
-		{
-			return true;
-		}
-		
-		return false;
 	}
 	
 	public String getName()

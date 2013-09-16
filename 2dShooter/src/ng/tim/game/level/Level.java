@@ -15,11 +15,12 @@ import ng.tim.game.entities.Entity;
 import ng.tim.game.entities.PlayerMP;
 import ng.tim.game.gfx.Camera;
 import ng.tim.game.gfx.SpriteSheet;
+import ng.tim.game.level.tiles.GrassTile;
 import ng.tim.game.level.tiles.Tile;
 
 public class Level
 {
-	private int[] tiles; //array of ids for what tile is in that coordinate
+	private Tile[] tiles; //array of ids for what tile is in that coordinate
 	
 	private int width; //width in tiles
 	private int height; //height in tiles
@@ -31,7 +32,12 @@ public class Level
 	private BufferedImage image;
 	
 	//image for spritesheet
-	SpriteSheet sheet;
+	private SpriteSheet sheet;
+	
+	public SpriteSheet getSheet()
+	{
+		return sheet;
+	}
 	
 	public Level(String imagePathsheet, String imagePath)
 	{
@@ -51,7 +57,7 @@ public class Level
 		{
 			this.width = 64;
 			this.height = 64;
-			tiles = new int[width*height];
+			tiles = new Tile[width*height];
 			this.generateLevel();
 		}
 	}
@@ -63,7 +69,7 @@ public class Level
 			this.image = ImageIO.read(Level.class.getResourceAsStream(imagePath));
 			this.width = image.getWidth();
 			this.height = image.getHeight();
-			tiles = new int[width * height];
+			tiles = new Tile[width * height];
 			this.loadTiles();
 		}
 		catch(IOException e)
@@ -76,18 +82,20 @@ public class Level
 	{
 		int[] tileColors = this.image.getRGB(0, 0, width, height, null, 0, width);
 		
+		//go through the tile colors array
 		for(int y = 0; y < height; y++)
 		{
 			for(int x = 0; x < width; x++)
 			{
-				tileCheck: for(Tile t : Tile.tiles)
+				if(tileColors[x + y * width] == 0xff00ff00)
 				{
-					if(t != null && t.getLevelColor() == tileColors[x + y * width])
-					{
-						this.tiles[x + y * width] = t.getId();
-						break tileCheck;
-					}
+					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);
 				}
+				else
+				{
+					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);
+				}
+				
 			}
 		}
 	}
@@ -105,11 +113,6 @@ public class Level
 		}
 	}
 	
-	public void alterTile(int x, int y, Tile newTile)
-	{
-		this.tiles[x + y * width] = newTile.getId();
-	}
-	
 	public void generateLevel()
 	{
 		for(int y = 0; y < height; y++)
@@ -118,11 +121,11 @@ public class Level
 			{
 				if(x * y % 10 < 7)
 				{
-					tiles[x + y * width] = Tile.GRASS.getId();	
+					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);	
 				}
 				else
 				{
-					tiles[x + y * width] = Tile.STONE.getId();
+					//tiles[x + y * width] = new StoneTile();
 				}
 			}
 		}
@@ -164,16 +167,12 @@ public class Level
 		{
 			for(int x = ((int)cam.getX())/Tile.width; x < (Game.WIDTH + Tile.width*2 + cam.getX()) / Tile.width; x++)
 			{
+				
 				//get what type of tile it is
-				int id = tiles[x + y * width];
-				
-				//get destination rectangle
-				Rectangle destRect = new Rectangle(x*Tile.width, y*Tile.height , Tile.width, Tile.height);
-				//get source rectangle
-				Rectangle sourceRect = new Rectangle((id*Tile.width)%sheet.getWidth(), (id/sheet.getWidth())*Tile.height, Tile.width, Tile.height);
-				
-				//draw the tile to screen
-				sheet.render(g, destRect, sourceRect);
+				if(x > 0 && x < width && y > 0 && y < height)
+				{				
+					tiles[x + y * width].render(g, this, tiles[x + y * width].xpos, tiles[x + y * width].ypos);
+				}
 			}
 			
 		}
@@ -195,9 +194,9 @@ public class Level
 		//return a void tile if the coordinates are out of bounds
 		if(x < 0 || x > width || y < 0 || y > height)
 		{
-			return Tile.VOID;
+			return null;
 		}
-		return Tile.tiles[tiles[x + y * width]];
+		return Tile.tiles[x + y * width];
 	}
 	
 	//Adds an entity to the level

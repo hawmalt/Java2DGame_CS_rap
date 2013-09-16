@@ -20,6 +20,14 @@ import ng.tim.game.net.GameServer;
 import ng.tim.game.net.packets.Packet00Login;
 import ng.tim.game.sound.Sound;
 
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.World;
+
 public class Game extends Canvas implements Runnable
 {
 
@@ -61,16 +69,42 @@ public class Game extends Canvas implements Runnable
 	//SoundTest
 	public Sound sound = new Sound("/Sound/Randomize.wav");
 	
+	//World class
+	public static World world;
+	public Body body;
+	
 	//initializing function
 	public void init()
 	{
 		game = this;
 		
+		world = new World(new Vec2(0, 9.8f)); // set up world
+		
 		mainSpriteSheet = new SpriteSheet("/sprite_sheet.png");
 		
 		input = new InputHandler(this);
 		
-		level = new Level(null,"/Levels/big_water_performace_test_level.png");
+		//body definition
+		BodyDef bd = new BodyDef();
+		bd.position.set(50, -200);  
+		bd.type = BodyType.DYNAMIC;
+		 
+		//define shape of the body.
+		PolygonShape cs = new PolygonShape();
+		cs.setAsBox(8, 8);
+		 
+		//define fixture of the body.
+		FixtureDef fd = new FixtureDef();
+		fd.shape = cs;
+		fd.density = 0.5f;
+		fd.friction = 0.3f;        
+		fd.restitution = 0.0f;
+		 
+		//create the body and add fixture to it
+		body =  world.createBody(bd);
+		body.createFixture(fd);
+		
+		level = new Level(null,"/Levels/platform_test.png");
 		player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
 		level.addEntity(player);
 		
@@ -180,7 +214,16 @@ public class Game extends Canvas implements Runnable
 	{
 		tickCount++;
 		
+		player.y = (int)body.getPosition().y; // test
+		player.x = (int)body.getPosition().x; // test
+		
+		float timeStep = 1.0f / 60.f;
+		int velocityIterations = 6;
+		int positionIterations = 2;
+		
 		level.tick();
+		
+		world.step(timeStep, velocityIterations, positionIterations);
 	}
 	
 	//draws to screen
@@ -200,8 +243,8 @@ public class Game extends Canvas implements Runnable
 		g.fillRect(0,0,WIDTH,HEIGHT);
 		
 		g.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
-		cam.setX(cam.getX() + 1);
-
+		cam.setX(player.x - WIDTH/2);
+		cam.setY(player.y - HEIGHT/2);
 		
 		g.transform(cam.getTransformation());
 		
