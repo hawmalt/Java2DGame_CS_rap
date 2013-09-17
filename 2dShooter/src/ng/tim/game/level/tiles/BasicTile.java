@@ -1,5 +1,7 @@
 package ng.tim.game.level.tiles;
 
+import static org.lwjgl.opengl.GL11.glVertex2i;
+
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -27,14 +29,12 @@ public class BasicTile extends Tile
 		
 	}
 	
-	public void render(Graphics g, Level level, int xPos, int yPos)
+	public void render()
 	{
-		Rectangle destRect = new Rectangle(xpos, ypos, Tile.width, Tile.height);
-		//get source rectangle
-		Rectangle sourceRect = new Rectangle(x * Tile.width, y * Tile.height, Tile.width, Tile.height);
-		
-		//draw the tile to screen
-		level.getSheet().render(g, destRect, sourceRect);
+		glVertex2i(xpos,ypos);
+		glVertex2i(xpos + Tile.width, ypos);
+		glVertex2i(xpos + Tile.width, ypos + Tile.height);
+		glVertex2i(xpos, ypos + Tile.height);
 	}
 
 }

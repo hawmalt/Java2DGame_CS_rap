@@ -8,39 +8,22 @@ import javax.swing.JFrame;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 
-@SuppressWarnings("serial")
-public class GameLauncher extends Applet
+public class GameLauncher
 {
-	private static Game game = new Game();
+	private static Game game;
 	public static final boolean DEBUG = false;
 	
 	
-	@Override
 	public void init()
 	{
-		setLayout(new BorderLayout());
-		add(game, BorderLayout.CENTER);
-		setMaximumSize(Game.DIMENSIONS);
-		setMinimumSize(Game.DIMENSIONS);
-		setPreferredSize(Game.DIMENSIONS);
-		game.debug = DEBUG;
-		game.isApplet = true;
+		
 	}
 	
-	@Override
-	public void start()
-	{
-		game.start();
-	}
-	
-	@Override
-	public void stop()
-	{
-		game.stop();
-	}
 	
 	public static void main(String[] args)
 	{
+		game = new Game();
+		
 		/*
 		//Sets the sizes of the screen
 		game.setMinimumSize(Game.DIMENSIONS);

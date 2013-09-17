@@ -12,14 +12,8 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glVertex2i;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import ng.tim.game.entities.Player;
@@ -39,11 +33,12 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-public class Game extends Canvas implements Runnable
+public class Game
 {
 
 	/**
@@ -53,15 +48,15 @@ public class Game extends Canvas implements Runnable
 
 	public static final int WIDTH = 500; //Width of the window
 	public static final int HEIGHT = 500; //Height of the window
-	public static final String NAME = "Game"; //The games name
+	public static final String NAME = "Our Game"; //The games name
 	public static Game game;
-	public static final Dimension DIMENSIONS = new Dimension(WIDTH,HEIGHT);
+	
+	long lastFrame; // Time at last frame
+	int fps; //frames per second
+	long lastFPS; //last fps time
 
 	public static SpriteSheet mainSpriteSheet; //this is the spritesheet that will be used for the entire game
-	
-	public JFrame frame; //The Jframe of game
-	private Thread thread;
-	
+		
 	public boolean running = false;
 	public int tickCount = 0;
 	
@@ -69,14 +64,12 @@ public class Game extends Canvas implements Runnable
 	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);	
 	private Camera cam = new Camera();
 	
-	public InputHandler input; //This handles all the key presses
 	public Level level;
 	public Player player;
 	
 	//Multiplier
 	public GameClient socketClient;
 	public GameServer socketServer;
-	public WindowHandler windowHandler;
 	
 	public boolean debug = true; //make this false only when we are about to release the game
 	public boolean isApplet = false;
@@ -90,10 +83,12 @@ public class Game extends Canvas implements Runnable
 	
 	public Game()
 	{
+		init();
+		
 		try
 		{
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-			Display.setTitle("Our Game");
+			Display.setTitle(NAME);
 			Display.create();
 		}
 		catch(Exception e)
@@ -101,30 +96,17 @@ public class Game extends Canvas implements Runnable
 			e.printStackTrace();
 		}
 		
-		//initialization of OpenGL
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, 500, 500, 0, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
+		initGL(); // initialize OpenGL
+		getDelta(); // call once before loop to initialize lastFrame
+		lastFPS = getTime(); // call before loop to initialise fps timer
+		
 		
 		while(!Display.isCloseRequested())
 		{
-			//render
+			int delta = getDelta();
 			
-			//clear the screen
-			glClear(GL_COLOR_BUFFER_BIT);
-			
-			glBegin(GL_QUADS);
-				glVertex2i(100, 100); //upper left
-				glVertex2i(150, 100); //upper right
-				glVertex2i(150, 150); //bottom right
-				glVertex2i(100, 150); //bottom left
-				
-				glVertex2i(200, 200); //upper left
-				glVertex2i(250, 200); //upper right
-				glVertex2i(250, 250); //bottom right
-				glVertex2i(200, 250); //bottom left
-			glEnd();
+			update();
+			renderGL();
 			
 			//Exit if the escape key is pressed
 			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
@@ -140,6 +122,61 @@ public class Game extends Canvas implements Runnable
 		Display.destroy();
 	}
 	
+	public void initGL() 
+	{
+		//initialization of OpenGL
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, 500, 500, 0, 1, -1);
+		glMatrixMode(GL_MODELVIEW);		
+	}
+
+	// how many milliseconds passed since last frame
+	public int getDelta()
+	{
+		long time = getTime();
+		int delta = (int)(time - lastFrame);
+		lastFrame = time;
+		
+		return delta;
+	}
+	
+	//get the system time in milliseconds
+	public long getTime()
+	{
+		return (Sys.getTime() * 1000 / Sys.getTimerResolution());
+	}
+	
+	//update game logic
+	public void update()
+	{
+		//put update code here
+		player.y = (int)body.getPosition().y; // test
+		player.x = (int)body.getPosition().x; // test
+		
+		float timeStep = 1.0f / 60.f;
+		int velocityIterations = 6;
+		int positionIterations = 2;
+		
+		level.tick();
+		
+		world.step(timeStep, velocityIterations, positionIterations);
+		
+		updateFPS();
+	}
+	
+	//calculate fps and set it as the title bar
+	public void updateFPS()
+	{
+		if(getTime() - lastFPS > 1000)
+		{
+			Display.setTitle("FPS: " + fps);
+			fps = 0;
+			lastFPS += 1000;
+		}
+		fps++;
+	}
+	
 	//initializing function
 	public void init()
 	{
@@ -148,9 +185,7 @@ public class Game extends Canvas implements Runnable
 		world = new World(new Vec2(0, 9.8f)); // set up world
 		
 		mainSpriteSheet = new SpriteSheet("/sprite_sheet.png");
-		
-		input = new InputHandler(this);
-		
+				
 		//body definition
 		BodyDef bd = new BodyDef();
 		bd.position.set(200, -200);  
@@ -171,180 +206,24 @@ public class Game extends Canvas implements Runnable
 		body =  world.createBody(bd);
 		body.createFixture(fd);
 		
-		level = new Level(null,"/Levels/platform_test.png");
-		player = new PlayerMP(level, 100, 100, input, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
-		level.addEntity(player);
-		
-		sound.play();
-		
-		if(!isApplet)
-		{
-			Packet00Login loginPacket = new Packet00Login(player.getUsername(), player.x, player.y);
-			if(socketServer != null)
-			{
-				socketServer.addConnection((PlayerMP) player, loginPacket);
-			}
-			loginPacket.writeData(socketClient);
-		}
+		level = new Level(null,"/Levels/platform_test_high.png");
+		player = new PlayerMP(level, 100, 100, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
+		level.addEntity(player);		
 	}
 	
-	//start the game
-	public synchronized void start()
-	{
-		running = true; //run the game
-		thread = new Thread(this, NAME + "_main"); //Create thread
-		thread.start();
-		if(!isApplet)
-		{
-			if(JOptionPane.showConfirmDialog(this, "Do you want to run the server") == 0)
-			{
-				socketServer = new GameServer(this);
-				socketServer.start();
-			}
-			
-			socketClient = new GameClient(this, "localhost"); //set up for MULTIPLAYER
-			socketClient.start();
-		}
-	}
-	
-	//stop the game
-	public synchronized void stop()
-	{
-		running = false; //the game is not running anymore
-		try
-		{
-			thread.join();
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	public void run()
-	{
-		long lastTime = System.nanoTime(); //Gets current time in nanoseconds since the epoch 1970s
-		double nsPerTick = 1000000000D/60D; //How many nanoseconds in one tick
-		
-		int ticks = 0; //how many ticks happened
-		int frames = 0; //how many frames happened
-		
-		long lastTimer = System.currentTimeMillis();
-		double delta = 0; //how many unproccesed nanoseconds passed so far
-		
-		init(); //This function is called once
-		
-		while(running)
-		{
-			long now = System.nanoTime();
-			delta += (now - lastTime) / nsPerTick;
-			lastTime = now; //update the lastTime
-			boolean shouldRender = true; //Limits how many frames are rendered if false
-			
-			//this will run until it hits 60 then it will continue
-			while(delta >= 1)
-			{
-				ticks++;
-				tick();
-				delta -= 1;
-				shouldRender = true;
-			}
-			
-			//make the thread sleep to limit frames
-			try {
-				Thread.sleep(2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			//Only render if shouldRender is true
-			if(shouldRender)
-			{
-				shouldRender = false;
-				frames++;
-				render();
-			}
-			
-			//update if 1000 milliseconds passed since last update
-			if(System.currentTimeMillis() - lastTimer >= 1000)
-			{
-				lastTimer += 1000;
-				debug(DebugLevel.WARNING, frames + " frames, " + ticks + " ticks");
-				frames = 0;
-				ticks = 0;
-			}
-		}
-	}
-	
-	private int x = 0, y = 0;
-	
-	//update logic in the game
-	public void tick()
-	{
-		tickCount++;
-		
-		player.y = (int)body.getPosition().y; // test
-		player.x = (int)body.getPosition().x; // test
-		
-		float timeStep = 1.0f / 60.f;
-		int velocityIterations = 6;
-		int positionIterations = 2;
-		
-		level.tick();
-		
-		world.step(timeStep, velocityIterations, positionIterations);
-	}
 	
 	//draws to screen
-	public void render()
+	public void renderGL()
 	{
-		BufferStrategy bs = getBufferStrategy(); //organize data on this canvas
-		if(bs == null)
-		{
-			createBufferStrategy(3); //Triple buffering
-			return;
-		}
+		//Clear the screen
+		glClear(GL_COLOR_BUFFER_BIT);
 		
-		Graphics2D g = (Graphics2D)bs.getDrawGraphics();
+		//Render the level
+		glBegin(GL_QUADS);
 		
-		//Blank out the screen
-		g.setColor(Color.black);
-		g.fillRect(0,0,WIDTH << 1,HEIGHT << 1);
+		level.renderTiles();
+		level.renderEntities();
 		
-		g.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
-		cam.setX(player.x - WIDTH/2);
-		cam.setY(player.y - HEIGHT/2);
-		
-		g.transform(cam.getTransformation());
-		
-		level.renderTiles(g, cam); //render the tiles
-		level.renderEntities(g);//render the entities on top of tiles
-		
-		g.dispose(); //frees up space since not using g anymore
-		bs.show(); //show contents of buffer
-	}
-
-	public void debug(DebugLevel level, String msg)
-	{
-		switch(level)
-		{
-		case INFO:
-			if(debug)
-			{
-				System.out.println("["+ NAME +"] " + msg);
-			}
-			break;
-		case WARNING:
-			System.out.println("["+ NAME +"] [WARNING] " + msg);
-			break;
-		case SEVERE:
-			System.out.println("["+ NAME +"] [SEVERE] " + msg);
-			this.stop();
-			break;
-		}
-	}
-	
-	public static enum DebugLevel
-	{
-		INFO,WARNING,SEVERE;
+		glEnd();
 	}
 }

@@ -1,18 +1,18 @@
 package ng.tim.game.level;
 
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.newdawn.slick.opengl.*;
+
 import javax.imageio.ImageIO;
 
 import ng.tim.game.Game;
 import ng.tim.game.entities.Entity;
 import ng.tim.game.entities.PlayerMP;
-import ng.tim.game.gfx.Camera;
 import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.tiles.GrassTile;
 import ng.tim.game.level.tiles.Tile;
@@ -20,7 +20,7 @@ import ng.tim.game.level.tiles.VoidTile;
 
 public class Level
 {
-	private Tile[] tiles; //array of ids for what tile is in that coordinate
+	private ArrayList<Tile> tiles; //array of ids for what tile is in that coordinate
 	
 	private int width; //width in tiles
 	private int height; //height in tiles
@@ -57,7 +57,7 @@ public class Level
 		{
 			this.width = 64;
 			this.height = 64;
-			tiles = new Tile[width*height];
+			tiles = new ArrayList<Tile>();
 			this.generateLevel();
 		}
 	}
@@ -69,7 +69,7 @@ public class Level
 			this.image = ImageIO.read(Level.class.getResourceAsStream(imagePath));
 			this.width = image.getWidth();
 			this.height = image.getHeight();
-			tiles = new Tile[width * height];
+			tiles = new ArrayList<Tile>();
 			this.loadTiles();
 		}
 		catch(IOException e)
@@ -89,12 +89,9 @@ public class Level
 			{
 				if(tileColors[x + y * width] == 0xff00ff00)
 				{
-					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);
+					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height));
 				}
-				else
-				{
-					tiles[x + y * width] = new VoidTile(0, 0, 0, 0xff000000, x * Tile.width, y * Tile.height);
-				}
+				
 				
 			}
 		}
@@ -121,8 +118,7 @@ public class Level
 			{
 				if(x * y % 10 < 7)
 				{
-					tiles[x + y * width] = new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height);	
-				}
+					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height));				}
 				else
 				{
 					//tiles[x + y * width] = new StoneTile();
@@ -159,32 +155,20 @@ public class Level
 	}
 	
 	//renders the tiles
-	public void renderTiles(Graphics g, Camera cam)
+	public void renderTiles()
 	{
-		
-		//go through the tiles array that are in the camera
-		for(int y = ((int)cam.getY())/Tile.height; y < (Game.HEIGHT + Tile.height*2 + cam.getY()) / Tile.height; y++)
+		for(Tile t : tiles)
 		{
-			for(int x = ((int)cam.getX())/Tile.width; x < (Game.WIDTH + Tile.width*2 + cam.getX()) / Tile.width; x++)
-			{
-				
-				//get what type of tile it is
-				if(x > 0 && x < width && y > 0 && y < height)
-				{				
-					tiles[x + y * width].render(g, this, tiles[x + y * width].xpos, tiles[x + y * width].ypos);
-				}
-			}
-			
+			t.render();
 		}
-		
 	}
 
 	//render the objects
-	public void renderEntities(Graphics g)
+	public void renderEntities()
 	{
 		for(Entity e : getEntities())
 		{
-			e.render(g);
+			e.render();
 		}
 	}
 	
@@ -242,8 +226,5 @@ public class Level
 		PlayerMP player = (PlayerMP)this.getEntities().get(index);
 		player.x = x;
 		player.y = y;
-		player.setNumSteps(numSteps);
-		player.setMovingDir(movingDir);
-		player.setMoving(isMoving);
 	}
 }

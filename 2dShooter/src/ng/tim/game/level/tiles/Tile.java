@@ -55,7 +55,7 @@ public abstract class Tile{
 	
 	public abstract void tick();
 	
-	public abstract void render(Graphics g, Level level, int x, int y);
+	public abstract void render();
 
 	public int getLevelColor() {
 		return levelColor;

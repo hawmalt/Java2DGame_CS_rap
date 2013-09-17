@@ -197,9 +197,6 @@ public class GameServer extends Thread
 			
 			player.x = packet.getX();
 			player.y = packet.getY();
-			player.setMoving(packet.isMoving());
-			player.setMovingDir(packet.getMovingDir());
-			player.setNumSteps(packet.getNumSteps());
 			packet.writeData(this);
 		}
 	}
