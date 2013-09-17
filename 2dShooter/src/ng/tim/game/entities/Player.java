@@ -63,17 +63,4 @@ public class Player extends Entity
 		return this.username;
 	}
 	
-	private Texture loadTexture(String key)
-	{
-		try {
-			return TextureLoader.getTexture("PNG", new FileInputStream(new File("res/" + key + ".png")));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
 }
