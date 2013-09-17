@@ -1,5 +1,17 @@
 package ng.tim.game;
 
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.glVertex2i;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,6 +39,9 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
 
 public class Game extends Canvas implements Runnable
 {
@@ -73,6 +88,58 @@ public class Game extends Canvas implements Runnable
 	public static World world;
 	public Body body;
 	
+	public Game()
+	{
+		try
+		{
+			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			Display.setTitle("Our Game");
+			Display.create();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		//initialization of OpenGL
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, 500, 500, 0, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
+		
+		while(!Display.isCloseRequested())
+		{
+			//render
+			
+			//clear the screen
+			glClear(GL_COLOR_BUFFER_BIT);
+			
+			glBegin(GL_QUADS);
+				glVertex2i(100, 100); //upper left
+				glVertex2i(150, 100); //upper right
+				glVertex2i(150, 150); //bottom right
+				glVertex2i(100, 150); //bottom left
+				
+				glVertex2i(200, 200); //upper left
+				glVertex2i(250, 200); //upper right
+				glVertex2i(250, 250); //bottom right
+				glVertex2i(200, 250); //bottom left
+			glEnd();
+			
+			//Exit if the escape key is pressed
+			if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE))
+			{
+				Display.destroy(); //get rid of the display
+				System.exit(0);
+			}
+			
+			Display.update();
+			Display.sync(60);
+		}
+		
+		Display.destroy();
+	}
+	
 	//initializing function
 	public void init()
 	{
@@ -86,7 +153,7 @@ public class Game extends Canvas implements Runnable
 		
 		//body definition
 		BodyDef bd = new BodyDef();
-		bd.position.set(50, -200);  
+		bd.position.set(200, -200);  
 		bd.type = BodyType.DYNAMIC;
 		 
 		//define shape of the body.
@@ -171,7 +238,7 @@ public class Game extends Canvas implements Runnable
 			long now = System.nanoTime();
 			delta += (now - lastTime) / nsPerTick;
 			lastTime = now; //update the lastTime
-			boolean shouldRender = true; //Limits how many frames are rendered
+			boolean shouldRender = true; //Limits how many frames are rendered if false
 			
 			//this will run until it hits 60 then it will continue
 			while(delta >= 1)
@@ -192,6 +259,7 @@ public class Game extends Canvas implements Runnable
 			//Only render if shouldRender is true
 			if(shouldRender)
 			{
+				shouldRender = false;
 				frames++;
 				render();
 			}
@@ -240,7 +308,7 @@ public class Game extends Canvas implements Runnable
 		
 		//Blank out the screen
 		g.setColor(Color.black);
-		g.fillRect(0,0,WIDTH,HEIGHT);
+		g.fillRect(0,0,WIDTH << 1,HEIGHT << 1);
 		
 		g.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
 		cam.setX(player.x - WIDTH/2);
@@ -277,6 +345,6 @@ public class Game extends Canvas implements Runnable
 	
 	public static enum DebugLevel
 	{
-		INFO,WARNING,SEVERE;	
+		INFO,WARNING,SEVERE;
 	}
 }

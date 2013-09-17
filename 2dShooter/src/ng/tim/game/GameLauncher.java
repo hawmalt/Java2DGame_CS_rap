@@ -5,6 +5,9 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.Display;
+
 @SuppressWarnings("serial")
 public class GameLauncher extends Applet
 {
@@ -38,6 +41,7 @@ public class GameLauncher extends Applet
 	
 	public static void main(String[] args)
 	{
+		/*
 		//Sets the sizes of the screen
 		game.setMinimumSize(Game.DIMENSIONS);
 		game.setMaximumSize(Game.DIMENSIONS);
@@ -59,5 +63,6 @@ public class GameLauncher extends Applet
 		game.debug = DEBUG;
 		
 		game.start();
+		*/
 	}
 }
