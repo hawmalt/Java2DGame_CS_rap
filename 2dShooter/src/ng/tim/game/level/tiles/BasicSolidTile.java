@@ -1,6 +1,7 @@
 package ng.tim.game.level.tiles;
 
 import ng.tim.game.Game;
+import ng.tim.game.level.Level;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.dynamics.Body;
@@ -11,8 +12,8 @@ import org.jbox2d.dynamics.FixtureDef;
 public class BasicSolidTile extends BasicTile
 {
 
-	public BasicSolidTile(int id, int x, int y, int levelColor, int xpos, int ypos) {
-		super(id, x, y, levelColor, xpos, ypos);
+	public BasicSolidTile(int id, int x, int y, int levelColor, int xpos, int ypos, Level level) {
+		super(id, x, y, levelColor, xpos, ypos, level);
 		
 		//body definition
 				BodyDef bd = new BodyDef();

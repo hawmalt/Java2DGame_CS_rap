@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import ng.tim.game.entities.Entity;
 import ng.tim.game.level.Level;
 
-public abstract class Tile{
+public abstract class Tile extends Entity{
 
 	//The width and height of each tile
 	public static final int width = 8;
@@ -19,7 +19,6 @@ public abstract class Tile{
 	*/
 	
 	protected int id; //Location in tiles array of where that tile is located
-	protected boolean solid; //For collision detection
 	protected boolean emitter; //For light
 	private int levelColor; //what color corresponds to this tile when loading a level
 	
@@ -27,13 +26,14 @@ public abstract class Tile{
 	public int xpos;
 	public int ypos;
 
-	public Tile(int id, boolean isSolid, boolean isEmitter, int levelColor)
+	public Tile(int id, boolean isEmitter, int levelColor, Level level)
 	{
+		super(level);
+		
 		this.id = (byte)id;
 		
 		this.levelColor = levelColor;
 		
-		this.solid = isSolid;
 		this.emitter = isEmitter;
 		tiles[id] = this;
 	}
@@ -41,11 +41,6 @@ public abstract class Tile{
 	public int getId()
 	{
 		return id;
-	}
-	
-	public boolean isSolid()
-	{
-		return solid;
 	}
 	
 	public boolean isEmitter()

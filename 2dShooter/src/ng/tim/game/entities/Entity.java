@@ -15,6 +15,8 @@ public abstract class Entity
 {
 	public int x,y;
 	protected Level level;
+	protected Texture texture;
+
 	
 	public Entity(Level level)
 	{

@@ -89,7 +89,7 @@ public class Level
 			{
 				if(tileColors[x + y * width] == 0xff00ff00)
 				{
-					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height));
+					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height, this));
 				}
 				
 				
@@ -118,7 +118,7 @@ public class Level
 			{
 				if(x * y % 10 < 7)
 				{
-					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height));				}
+					tiles.add(new GrassTile(2, 2, 0, 0xff00ff00, x * Tile.width, y * Tile.height, this));				}
 				else
 				{
 					//tiles[x + y * width] = new StoneTile();

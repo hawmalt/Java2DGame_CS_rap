@@ -11,9 +11,10 @@ import java.io.IOException;
 import ng.tim.game.Game;
 import ng.tim.game.gfx.Animation;
 import ng.tim.game.level.Level;
-
 import static org.lwjgl.opengl.GL11.*;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -24,8 +25,8 @@ public class Player extends Entity
 	private String username;
 	public static final int playerWidth = 16;
 	public static final int playerHeight = 16;
-	private Texture texture;
 	private Animation anim1 = new Animation(Game.mainSpriteSheet, 2, 0, "walking up", true, new Rectangle(0, 28*8, playerWidth, playerHeight), 20);
+	
 	
 	public Player(Level level, int x, int y, String username)
 	{
@@ -42,9 +43,7 @@ public class Player extends Entity
 	}
 
 	public void render()
-	{
-		texture.bind();
-		
+	{		
 		glTexCoord2f(0, 0);
 		glVertex2i(x, y);
 		
@@ -56,6 +55,7 @@ public class Player extends Entity
 		
 		glTexCoord2f(0, 1);
 		glVertex2i(x, y + playerHeight);
+		
 	}
 	
 	public String getUsername()

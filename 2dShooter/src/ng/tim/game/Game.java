@@ -3,9 +3,21 @@ package ng.tim.game;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+
+import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -16,7 +28,6 @@ import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.Level;
 import ng.tim.game.net.GameClient;
 import ng.tim.game.net.GameServer;
-import ng.tim.game.net.packets.Packet00Login;
 import ng.tim.game.sound.Sound;
 
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -30,6 +41,8 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
 public class Game
 {
@@ -49,13 +62,16 @@ public class Game
 	long lastFPS; //last fps time
 
 	public static SpriteSheet mainSpriteSheet; //this is the spritesheet that will be used for the entire game
-		
+	
 	public boolean running = false;
 	public int tickCount = 0;
 	
 	//For rendering
 	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);	
 	private Camera cam = new Camera();
+	int shaderProgram;
+	int vertexShader;
+	int fragmentShader;
 	
 	public Level level;
 	public Player player;
@@ -112,11 +128,81 @@ public class Game
 			Display.sync(60);
 		}
 		
+		glDeleteProgram(shaderProgram);
+		glDeleteShader(vertexShader);
+		glDeleteShader(fragmentShader);
+		
 		Display.destroy();
+		System.exit(0);
 	}
 	
 	public void initGL() 
 	{
+		//Initialize the GLSL program
+		shaderProgram = glCreateProgram();
+		vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		
+		StringBuilder vertexShaderSource = new StringBuilder();
+		StringBuilder fragmentShaderSource = new StringBuilder();
+
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader("res/Shaders/shader.vert"));
+			String line;
+			while((line = reader.readLine()) != null)
+			{
+				vertexShaderSource.append(line).append('\n');
+			}
+			reader.close();
+			
+		}
+		catch(IOException e)
+		{
+			System.err.println("Vertex Shader was not loaded properly");
+			Display.destroy();
+			System.exit(1);
+		}
+		
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader("res/Shaders/shader.frag"));
+			String line;
+			while((line = reader.readLine()) != null)
+			{
+				fragmentShaderSource.append(line).append('\n');
+			}
+			reader.close();
+			
+		}
+		catch(IOException e)
+		{
+			System.err.println("Fragment Shader was not loaded properly");
+			Display.destroy();
+			System.exit(1);
+		}
+		
+		//compile the vertex shader
+		glShaderSource(vertexShader, vertexShaderSource);
+		glCompileShader(vertexShader);
+		
+		if(glGetShaderi(vertexShader, GL_COMPILE_STATUS) == GL_FALSE)
+		{
+			System.err.println("Vertex shader wasn't able to be compiled correctly.");
+		}
+		
+		glShaderSource(fragmentShader, fragmentShaderSource);
+        glCompileShader(fragmentShader);
+        if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE) {
+            System.err.println("Fragment shader wasn't able to be compiled correctly.");
+        }
+        
+        //attach the shader program
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+        glValidateProgram(shaderProgram);
+		
 		//initialization of OpenGL
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -214,6 +300,8 @@ public class Game
 		//Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		//Use the shader program
+		glUseProgram(shaderProgram);
 		//Render the level
 		glBegin(GL_QUADS);
 		
@@ -221,5 +309,9 @@ public class Game
 		level.renderEntities();
 		
 		glEnd();
+		
+		//Stop using the shader program
+		glUseProgram(0);
+		
 	}
 }
