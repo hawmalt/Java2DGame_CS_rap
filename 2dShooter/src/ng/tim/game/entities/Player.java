@@ -1,6 +1,7 @@
 package ng.tim.game.entities;
 
 import static org.lwjgl.opengl.GL11.glVertex2i;
+import static org.lwjgl.opengl.GL13.*;
 
 import java.awt.Rectangle;
 import java.io.File;
@@ -14,6 +15,7 @@ import ng.tim.game.level.Level;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -43,7 +45,10 @@ public class Player extends Entity
 	}
 
 	public void render()
-	{		
+	{	
+		GL13.glActiveTexture(GL_TEXTURE0);
+		texture.bind();
+				
 		glTexCoord2f(0, 0);
 		glVertex2i(x, y);
 		

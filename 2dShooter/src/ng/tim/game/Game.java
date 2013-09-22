@@ -186,13 +186,17 @@ public class Game
 		glShaderSource(vertexShader, vertexShaderSource);
 		glCompileShader(vertexShader);
 		
+		//throw an error ourselves because java wont throw one automatically
 		if(glGetShaderi(vertexShader, GL_COMPILE_STATUS) == GL_FALSE)
 		{
 			System.err.println("Vertex shader wasn't able to be compiled correctly.");
 		}
 		
+		//compile the fragment shader
 		glShaderSource(fragmentShader, fragmentShaderSource);
         glCompileShader(fragmentShader);
+        
+		//throw an error ourselves because java wont throw one automatically
         if (glGetShaderi(fragmentShader, GL_COMPILE_STATUS) == GL_FALSE) {
             System.err.println("Fragment shader wasn't able to be compiled correctly.");
         }
@@ -302,6 +306,7 @@ public class Game
 		
 		//Use the shader program
 		glUseProgram(shaderProgram);
+		
 		//Render the level
 		glBegin(GL_QUADS);
 		
