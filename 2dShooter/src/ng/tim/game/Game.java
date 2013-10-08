@@ -230,15 +230,7 @@ public class Game
         glValidateProgram(shaderProgram);
 		
 		//initialization of OpenGL
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, 500, 500, 0, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+		spriteBatch.initOpenGL();
 	}
 
 	// how many milliseconds passed since last frame
@@ -330,18 +322,6 @@ public class Game
 		
 		//Use the shader program
 		glUseProgram(shaderProgram);
-		
-		/*
-		
-		//Render the level
-		glBegin(GL_QUADS);
-		
-		level.renderTiles();
-		level.renderEntities();
-		
-		glEnd();
-		
-		*/
 		
 		spriteBatch.begin();
 		level.renderEntities();

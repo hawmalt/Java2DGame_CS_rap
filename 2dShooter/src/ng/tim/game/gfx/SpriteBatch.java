@@ -1,11 +1,8 @@
 package ng.tim.game.gfx;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glVertex2i;
 import static org.lwjgl.opengl.GL13.*;
+import ng.tim.game.Game;
 import ng.tim.game.entities.Entity;
 
 import org.lwjgl.opengl.GL13;
@@ -42,9 +39,24 @@ public class SpriteBatch {
 		isDrawing = false;
 		
 		glEnd();
-		glDisable(GL_TEXTURE_2D);
-		glEnable(GL_TEXTURE_2D);
+		//glDisable(GL_TEXTURE_2D);
+		//glEnable(GL_TEXTURE_2D);
 	}
+	
+	public void initOpenGL()
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, Game.WIDTH, Game.HEIGHT, 0, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
+		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+
+	}
+	
 	
 	public void draw(Entity ent)
 	{
@@ -81,19 +93,14 @@ public class SpriteBatch {
 	{
 		glEnd();
 		
+		
+		//These two "unbind" the texture
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_TEXTURE_2D);
 		
-		//glDeleteTextures(texture.getTextureID());
-		
 		texture = ent.getTexture(); //set the texture
-		glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
+		glBindTexture(GL_TEXTURE_2D, texture.getTextureID()); //bind the texture
 		glBegin(GL_QUADS);
 		
-	}
-	
-	public void setTexture(Texture t)
-	{
-		texture = t;
 	}
 }
