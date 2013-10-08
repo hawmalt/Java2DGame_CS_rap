@@ -1,21 +1,43 @@
 package ng.tim.game;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glDisableClientState;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnableClientState;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glAttachShader;
+import static org.lwjgl.opengl.GL20.glCompileShader;
+import static org.lwjgl.opengl.GL20.glCreateProgram;
+import static org.lwjgl.opengl.GL20.glCreateShader;
+import static org.lwjgl.opengl.GL20.glDeleteProgram;
+import static org.lwjgl.opengl.GL20.glDeleteShader;
+import static org.lwjgl.opengl.GL20.glGetShaderi;
+import static org.lwjgl.opengl.GL20.glLinkProgram;
+import static org.lwjgl.opengl.GL20.glShaderSource;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+import static org.lwjgl.opengl.GL20.glValidateProgram;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -24,6 +46,7 @@ import javax.swing.JOptionPane;
 import ng.tim.game.entities.Player;
 import ng.tim.game.entities.PlayerMP;
 import ng.tim.game.gfx.Camera;
+import ng.tim.game.gfx.SpriteBatch;
 import ng.tim.game.gfx.SpriteSheet;
 import ng.tim.game.level.Level;
 import ng.tim.game.net.GameClient;
@@ -41,8 +64,6 @@ import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
 
 public class Game
 {
@@ -62,6 +83,7 @@ public class Game
 	long lastFPS; //last fps time
 
 	public static SpriteSheet mainSpriteSheet; //this is the spritesheet that will be used for the entire game
+	public static SpriteBatch spriteBatch = new SpriteBatch();
 	
 	public boolean running = false;
 	public int tickCount = 0;
@@ -71,7 +93,7 @@ public class Game
 	private Camera cam = new Camera();
 	int shaderProgram;
 	int vertexShader;
-	int fragmentShader;
+	int fragmentShader;	
 	
 	public Level level;
 	public Player player;
@@ -214,6 +236,8 @@ public class Game
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
+		glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -307,6 +331,8 @@ public class Game
 		//Use the shader program
 		glUseProgram(shaderProgram);
 		
+		/*
+		
 		//Render the level
 		glBegin(GL_QUADS);
 		
@@ -314,6 +340,17 @@ public class Game
 		level.renderEntities();
 		
 		glEnd();
+		
+		*/
+		
+		spriteBatch.begin();
+		level.renderEntities();
+		level.renderTiles();
+		spriteBatch.end();
+		
+		//Disable the buffers
+		glDisableClientState(GL_COLOR_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);
 		
 		//Stop using the shader program
 		glUseProgram(0);

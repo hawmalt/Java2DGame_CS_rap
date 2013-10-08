@@ -8,8 +8,8 @@ import ng.tim.game.level.Level;
 public abstract class Tile extends Entity{
 
 	//The width and height of each tile
-	public static final int width = 8;
-	public static final int height = 8;
+	public static final int tileWidth = 8;
+	public static final int tileHeight = 8;
 	
 	public static final Tile[] tiles = new Tile[256];
 /*	public static final Tile VOID = new BasicTile(0,0,0, 0xff000000);
@@ -23,12 +23,14 @@ public abstract class Tile extends Entity{
 	private int levelColor; //what color corresponds to this tile when loading a level
 	
 	//position of the tile in world space
-	public int xpos;
-	public int ypos;
+
 
 	public Tile(int id, boolean isEmitter, int levelColor, Level level)
 	{
 		super(level);
+		
+		width = tileWidth;
+		height = tileHeight;
 		
 		this.id = (byte)id;
 		

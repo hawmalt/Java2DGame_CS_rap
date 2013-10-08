@@ -12,17 +12,17 @@ import org.jbox2d.dynamics.FixtureDef;
 public class BasicSolidTile extends BasicTile
 {
 
-	public BasicSolidTile(int id, int x, int y, int levelColor, int xpos, int ypos, Level level) {
-		super(id, x, y, levelColor, xpos, ypos, level);
+	public BasicSolidTile(int id, int levelColor, int xpos, int ypos, Level level) {
+		super(id, levelColor, xpos, ypos, level);
 		
 		//body definition
 				BodyDef bd = new BodyDef();
-				bd.position.set(this.xpos, this.ypos);  
+				bd.position.set(this.x, this.y);  
 				bd.type = BodyType.STATIC;
 				 
 				//define shape of the body.
 				PolygonShape cs = new PolygonShape();
-				cs.setAsBox(Tile.width/2, Tile.height/2);
+				cs.setAsBox(Tile.tileWidth/2, Tile.tileHeight/2);
 				 
 				//define fixture of the body.
 				FixtureDef fd = new FixtureDef();
@@ -35,8 +35,8 @@ public class BasicSolidTile extends BasicTile
 				Body body =  Game.world.createBody(bd);
 				body.createFixture(fd);
 				
-				this.xpos = (int) body.getPosition().x;
-				this.ypos = (int) body.getPosition().y;
+				this.x = (int) body.getPosition().x;
+				this.y = (int) body.getPosition().y;
 	}
 
 }

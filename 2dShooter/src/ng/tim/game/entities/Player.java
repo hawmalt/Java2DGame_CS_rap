@@ -25,15 +25,16 @@ public class Player extends Entity
 {
 
 	private String username;
-	public static final int playerWidth = 16;
-	public static final int playerHeight = 16;
-	private Animation anim1 = new Animation(Game.mainSpriteSheet, 2, 0, "walking up", true, new Rectangle(0, 28*8, playerWidth, playerHeight), 20);
+	private Animation anim1 = new Animation(Game.mainSpriteSheet, 2, 0, "walking up", true, new Rectangle(0, 28*8, width, height), 20);
 	
 	
 	public Player(Level level, int x, int y, String username)
 	{
 		super(level);
 		this.username = username;
+		
+		width = 16;
+		height = 16;
 		
 		//load the texture
 		texture = loadTexture("Player");
@@ -53,13 +54,13 @@ public class Player extends Entity
 		glVertex2i(x, y);
 		
 		glTexCoord2f(1, 0);
-		glVertex2i(x + playerWidth, y);
+		glVertex2i(x + width, y);
 		
 		glTexCoord2f(1, 1);
-		glVertex2i(x + playerWidth, y + playerHeight);
+		glVertex2i(x + width, y + height);
 		
 		glTexCoord2f(0, 1);
-		glVertex2i(x, y + playerHeight);
+		glVertex2i(x, y + height);
 		
 	}
 	

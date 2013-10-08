@@ -13,7 +13,7 @@ import ng.tim.game.level.Level;
 
 public abstract class Entity
 {
-	public int x,y;
+	public int x,y,width,height;
 	protected Level level;
 	protected Texture texture;
 
@@ -40,6 +40,11 @@ public abstract class Entity
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public Texture getTexture()
+	{
+		return texture;
 	}
 	
 	public abstract void tick();
