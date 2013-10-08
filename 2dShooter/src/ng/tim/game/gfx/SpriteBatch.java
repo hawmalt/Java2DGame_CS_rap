@@ -24,8 +24,6 @@ public class SpriteBatch {
 		isDrawing = true;
 		
 		glBegin(GL_QUADS);
-		//GL13.glActiveTexture(GL_TEXTURE0);
-		//texture.bind();
 	}
 	
 	public void end()
@@ -39,8 +37,6 @@ public class SpriteBatch {
 		isDrawing = false;
 		
 		glEnd();
-		//glDisable(GL_TEXTURE_2D);
-		//glEnable(GL_TEXTURE_2D);
 	}
 	
 	public void initOpenGL()
@@ -92,7 +88,6 @@ public class SpriteBatch {
 	public void flush(Entity ent)
 	{
 		glEnd();
-		
 		
 		//These two "unbind" the texture
 		glDisable(GL_TEXTURE_2D);
