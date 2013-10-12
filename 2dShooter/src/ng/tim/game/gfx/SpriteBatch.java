@@ -23,6 +23,7 @@ public class SpriteBatch {
 		
 		isDrawing = true;
 		
+
 		glBegin(GL_QUADS);
 	}
 	
@@ -35,7 +36,6 @@ public class SpriteBatch {
 		}
 		
 		isDrawing = false;
-		
 		glEnd();
 	}
 	
@@ -59,6 +59,11 @@ public class SpriteBatch {
 		if(!isDrawing)
 		{
 			System.err.println("Must be drawing");
+			return;
+		}
+		
+		if(ent.x > Game.WIDTH || ent.y > Game.HEIGHT || (ent.x + ent.width) < 0 || (ent.y + ent.height) < 0)
+		{
 			return;
 		}
 		

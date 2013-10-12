@@ -15,6 +15,7 @@ public class BasicSolidTile extends BasicTile
 	public BasicSolidTile(int id, int levelColor, int xpos, int ypos, Level level) {
 		super(id, levelColor, xpos, ypos, level);
 		
+		
 		//body definition
 				BodyDef bd = new BodyDef();
 				bd.position.set(this.x, this.y);  
@@ -37,6 +38,7 @@ public class BasicSolidTile extends BasicTile
 				
 				this.x = (int) body.getPosition().x;
 				this.y = (int) body.getPosition().y;
+				
 	}
 
 }
