@@ -85,7 +85,6 @@ public class GameClient extends Thread
 				break;
 			case MOVE:
 				packet = new Packet02Move(data);
-				handleMove((Packet02Move)packet);
 		}
 			
 	}
@@ -113,8 +112,4 @@ public class GameClient extends Thread
 		game.level.addEntity(player);
 	}
 	
-	private void handleMove(Packet02Move packet)
-	{
-		this.game.level.movePlayer(packet.getUsername(), packet.getX(), packet.getY(), packet.getNumSteps(), packet.isMoving(), packet.getMovingDir());
-	}
 }

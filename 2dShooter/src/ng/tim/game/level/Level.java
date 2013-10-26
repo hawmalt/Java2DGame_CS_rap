@@ -127,6 +127,7 @@ public class Level
 		}
 	}
 	
+	
 	//Solves concurrency error
 	public synchronized List<Entity> getEntities()
 	{
@@ -219,13 +220,5 @@ public class Level
 		}
 		
 		return index;
-	}
-	
-	public void movePlayer(String username, int x, int y, int numSteps, boolean isMoving, int movingDir)
-	{
-		int index = getPlayerMPindex(username);
-		PlayerMP player = (PlayerMP)this.getEntities().get(index);
-		player.x = x;
-		player.y = y;
 	}
 }

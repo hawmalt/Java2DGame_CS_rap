@@ -29,7 +29,7 @@ public class BasicSolidTile extends BasicTile
 				FixtureDef fd = new FixtureDef();
 				fd.shape = cs;
 				fd.density = 0.5f;
-				fd.friction = 0.3f;        
+				fd.friction = 0.3f;
 				fd.restitution = 0.5f;
 				 
 				//create the body and add fixture to it

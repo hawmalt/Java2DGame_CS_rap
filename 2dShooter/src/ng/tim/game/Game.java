@@ -36,7 +36,6 @@ import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.opengl.GL20.glValidateProgram;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -89,7 +88,6 @@ public class Game
 	public int tickCount = 0;
 	
 	//For rendering
-	private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);	
 	private Camera cam = new Camera();
 	int shaderProgram;
 	int vertexShader;
@@ -255,6 +253,8 @@ public class Game
 		//put update code here
 		player.y = (int)body.getPosition().y; // test
 		player.x = (int)body.getPosition().x; // test
+		
+		body.setLinearVelocity(new Vec2(3,0));
 		
 		float timeStep = 1.0f / 60.f;
 		int velocityIterations = 6;
