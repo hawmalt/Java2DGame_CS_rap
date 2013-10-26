@@ -1,9 +1,9 @@
 package ng.tim.game;
 
-import java.applet.Applet;
-import java.awt.BorderLayout;
+//import java.applet.Applet;
+//import java.awt.BorderLayout;
 
-import javax.swing.JFrame;
+//import javax.swing.JFrame;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;

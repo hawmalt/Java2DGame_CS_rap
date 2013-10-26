@@ -254,7 +254,7 @@ public class Game
 		player.y = (int)body.getPosition().y; // test
 		player.x = (int)body.getPosition().x; // test
 		
-		body.setLinearVelocity(new Vec2(3,0));
+		/*body.setLinearVelocity(new Vec2(3,0));*/
 		
 		float timeStep = 1.0f / 60.f;
 		int velocityIterations = 6;
@@ -310,6 +310,7 @@ public class Game
 		
 		level = new Level(null,"/Levels/platform_test_high.png");
 		player = new PlayerMP(level, 100, 100, JOptionPane.showInputDialog(this, "Please enter a username"), null, -1);
+		player.setBody(body);
 		level.addEntity(player);		
 	}
 	
