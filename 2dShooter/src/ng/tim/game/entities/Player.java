@@ -47,27 +47,31 @@ public class Player extends Entity
 	public void setBody(Body b)
 	{
 		body = b;
+		
 	}
 	/*
 	 * known bugs 
-	 * The program currently uses the absolute value of the y velocity to approximate when the player is in the air.  
-	 * This makes the program think that the player is on the ground at the peek of its jumps.
-	 * 
-	 * The player ends up burried part way into the ground
+	 *
+	 * The player can end up buried part way into the ground
 	 */
 	public void tick()
 	{
-		if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-			moveLeft();
-		if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
-			moveRight();
-		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE))
-			jump();
+		if(body.getContactList()!=null)// if on the ground
+		{
+			if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
+				moveLeft();
+			if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
+				moveRight();
+			if(Keyboard.isKeyDown(Keyboard.KEY_SPACE))
+				jump();
+			
+			//sets the sideways velocity to zero if no sideways keys are pressed and player is on the ground
+			if(!(Keyboard.isKeyDown(Keyboard.KEY_SPACE)||Keyboard.isKeyDown(Keyboard.KEY_RIGHT)||Keyboard.isKeyDown(Keyboard.KEY_LEFT)))
+				body.setLinearVelocity(new Vec2(0, body.getLinearVelocity().y));
+		}
 		
-		//sets the sideways velocity to zero if no sideways keys are pressed and player is on the ground
-		if(!(Keyboard.isKeyDown(Keyboard.KEY_SPACE)||Keyboard.isKeyDown(Keyboard.KEY_RIGHT)||Keyboard.isKeyDown(Keyboard.KEY_LEFT))&&
-				Math.abs(body.getLinearVelocity().y)<2)
-			body.setLinearVelocity(new Vec2(0, body.getLinearVelocity().y));
+		
+		
 		
 		
 		body.setLinearVelocity(new Vec2(body.getLinearVelocity().x, body.getLinearVelocity().y+body.getGravityScale()));
@@ -75,16 +79,12 @@ public class Player extends Entity
 	
 	public void moveLeft()
 	{
-		if(Math.abs(body.getLinearVelocity().y)<2)// used as a substitute to seeing if the player is on the ground.  
-													//Cannot change direction in air
-			body.setLinearVelocity(new Vec2(-speed, body.getLinearVelocity().y));
+		body.setLinearVelocity(new Vec2(-speed, body.getLinearVelocity().y));
 	}
 	
 	public void moveRight()
 	{
-		if(Math.abs(body.getLinearVelocity().y)<2)// used as a substitute to seeing if the player is on the ground.  
-													//Cannot change direction in air
-			body.setLinearVelocity(new Vec2(speed, body.getLinearVelocity().y));
+		body.setLinearVelocity(new Vec2(speed, body.getLinearVelocity().y));
 	}
 	
 	public void jump()
